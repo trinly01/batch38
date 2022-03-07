@@ -8,7 +8,7 @@
     <q-btn flat round dense icon="more_vert" />
   </q-toolbar>
   <q-input filled label="Filled" />
-  <button>Add</button>
+  <q-btn icon="add" label="add" />
   <ul>
     <li>asdasd</li>
     <li>asdasd</li>
