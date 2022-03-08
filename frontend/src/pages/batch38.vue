@@ -3,8 +3,10 @@
     <q-toolbar class="bg-purple text-white">
       <q-btn flat round dense icon="assignment_ind" />
       <q-toolbar-title>
-        {{ state.task }}
-        Batch 38 Todo App
+        <!-- {{ state.task }} -->
+        Todo App -
+        <greet v-if="!state.fullName" @getFullName="(val) => state.fullName = val" fname="Randy" lname="Gatachalian" />
+        <span v-else>{{state.fullName}}</span>
       </q-toolbar-title>
       <q-btn flat round dense icon="apps" class="q-mr-xs" />
       <q-btn flat round dense icon="more_vert" />
@@ -18,7 +20,7 @@
         <q-item-section avatar>
           <q-icon name="signal_wifi_off" />
         </q-item-section>
-        <q-item-section>{{ todo.desc }}</q-item-section>
+        <q-item-section>{{ todo.title }}</q-item-section>
         <q-item-section side>Side</q-item-section>
       </q-item>
     </q-list>
@@ -27,26 +29,36 @@
 
 <script setup>
 
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+
+import greet from 'components/greet.vue'
+
+import axios from 'axios'
 
 const state = reactive({
-  task: ''
+  task: '',
+  fullName: ''
 })
 
 // const task = ref('')
 const todos = ref([
   {
     id: Date.now(),
-    desc: 'Add Function',
-    isDone: false
+    title: 'Add Function',
+    completed: false
   }
 ])
+
+onMounted(async () => {
+  const { data } = await axios.get('https://jsonplaceholder.typicode.com/todos')
+  todos.value = data
+})
 
 function add () {
   todos.value.unshift({
     id: Date.now(),
-    desc: state.task,
-    isDone: false
+    title: state.task,
+    completed: false
   })
 }
 </script>
