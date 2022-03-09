@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="printable">
     <q-toolbar class="bg-purple text-white">
       <q-btn flat round dense icon="assignment_ind" />
       <q-toolbar-title>
@@ -27,6 +27,7 @@
       </q-item>
     </q-list>
     <pie-chart :data="[['Active', countActive], ['Completed', countCompleted]]" :donut="true"></pie-chart>
+    <q-btn icon="print" @click="printHTML" />
   </div>
 </template>
 
@@ -36,11 +37,15 @@ import { reactive, ref, onMounted, computed, getCurrentInstance } from 'vue'
 
 import greet from 'components/greet.vue'
 
+import print from 'ink-html'
+
 const app = getCurrentInstance()
 
 const { $axios } = app.appContext.config.globalProperties
 
 // import axios from 'axios'
+
+const printable = ref(null)
 
 const state = reactive({
   task: '',
@@ -72,5 +77,23 @@ function add () {
     title: state.task,
     completed: false
   })
+}
+
+function printHTML () {
+  // const dd = {
+  //   content: [
+  //     {
+  //       table: {
+  //         body: [
+  //           ['completed', 'active'],
+  //           [countCompleted.value, countActive.value]
+  //         ]
+  //       }
+  //     }
+  //   ]
+  // }
+  // $pdfMake.createPdf(dd).open()
+  console.log(printable.value)
+  print(printable.value)
 }
 </script>
