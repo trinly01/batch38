@@ -16,31 +16,43 @@
       <q-btn @click="add" icon="add" label="add" />
     </div>
     <q-list v-for="todo in todos" :key="todo.id" class="q-ma-sm" bordered separator>
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple @mouseover="selected = todo.id" @mouseleave="selected = null">
         <q-item-section avatar>
-          <q-icon name="signal_wifi_off" />
+          <q-checkbox v-model="todo.completed" />
         </q-item-section>
-        <q-item-section>{{ todo.title }}</q-item-section>
-        <q-item-section side>Side</q-item-section>
+        <q-item-section :class="{ 'text-strike text-grey': todo.completed }" >{{ todo.title }}</q-item-section>
+        <q-item-section side>
+          <q-btn v-show="selected === todo.id" round icon="delete" />
+        </q-item-section>
       </q-item>
     </q-list>
+    <pie-chart :data="[['Active', countActive], ['Completed', countCompleted]]" :donut="true"></pie-chart>
   </div>
 </template>
 
 <script setup>
 
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed, getCurrentInstance } from 'vue'
 
 import greet from 'components/greet.vue'
 
-import axios from 'axios'
+const app = getCurrentInstance()
+
+const { $axios } = app.appContext.config.globalProperties
+
+// import axios from 'axios'
 
 const state = reactive({
   task: '',
   fullName: ''
 })
 
+const countCompleted = computed(() => todos.value.filter(t => t.completed).length)
+const countActive = computed(() => todos.value.length - countCompleted.value)
 // const task = ref('')
+
+const selected = ref(null)
+
 const todos = ref([
   {
     id: Date.now(),
@@ -50,7 +62,7 @@ const todos = ref([
 ])
 
 onMounted(async () => {
-  const { data } = await axios.get('https://jsonplaceholder.typicode.com/todos')
+  const { data } = await $axios.get('https://jsonplaceholder.typicode.com/todos')
   todos.value = data
 })
 
