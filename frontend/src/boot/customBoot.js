@@ -3,6 +3,8 @@ import { boot } from 'quasar/wrappers'
 import VueChartkick from 'vue-chartkick'
 import 'chartkick/chart.js'
 
+import wings from 'wings4'
+
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 pdfMake.vfs = pdfFonts.pdfMake.vfs
@@ -15,4 +17,9 @@ export default boot(async ({ app, router }) => {
   app.use(VueChartkick)
 
   app.config.globalProperties.$pdfMake = pdfMake
+
+  const $wings = wings('http://localhost:3030')
+  app.config.globalProperties.$wings = $wings
+
+  app.config.globalProperties.$todosService = $wings.wingsService('todos').init()
 })

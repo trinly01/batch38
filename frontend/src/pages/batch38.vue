@@ -15,10 +15,10 @@
       <q-input v-model="state.task" class="col" filled label="What needs to be done" />
       <q-btn @click="add" icon="add" label="add" />
     </div>
-    <q-list v-for="todo in todos" :key="todo.id" class="q-ma-sm" bordered separator>
+    <q-list v-for="todo in todos" :key="todo._id" class="q-ma-sm" bordered separator>
       <q-item clickable v-ripple @mouseover="selected = todo.id" @mouseleave="selected = null">
         <q-item-section avatar>
-          <q-checkbox v-model="todo.completed" />
+          <q-checkbox @click="$todosService.patch(todo._id, { completed: !todo.completed })" :modelValue="todo.completed" />
         </q-item-section>
         <q-item-section :class="{ 'text-strike text-grey': todo.completed }" >{{ todo.title }}</q-item-section>
         <q-item-section side>
@@ -41,7 +41,7 @@ import print from 'ink-html'
 
 const app = getCurrentInstance()
 
-const { $axios } = app.appContext.config.globalProperties
+const { $todosService } = app.appContext.config.globalProperties
 
 // import axios from 'axios'
 
@@ -67,13 +67,21 @@ const todos = ref([
 ])
 
 onMounted(async () => {
-  const { data } = await $axios.get('https://jsonplaceholder.typicode.com/todos')
-  todos.value = data
+  // const { data: { data } } = await $axios.get('http://localhost:3030/todos')
+
+  $todosService.on('dataChange', (data) => {
+    console.log(data)
+    todos.value = [...data]
+  })
 })
 
 function add () {
-  todos.value.unshift({
-    id: Date.now(),
+  // todos.value.unshift({
+  //   id: Date.now(),
+  //   title: state.task,
+  //   completed: false
+  // })
+  $todosService.create({
     title: state.task,
     completed: false
   })
@@ -97,29 +105,30 @@ function printHTML () {
   print(printable.value)
 }
 
-class Person {
-  constructor (name) {
-    this.name = name
-  }
+// class Person {
+//   constructor (name) {
+//     this.name = name
+//   }
 
-  changeName (newName) {
-    this.name = newName
-    return this.name
-  }
+//   changeName (newName) {
+//     this.name = newName
+//     return this.name
+//   }
 
-  getName () {
-    const testFunc = () => {
-      return this.name
-    }
-    return testFunc()
-  }
-}
+//   getName () {
+//     const testFunc = () => {
+//       return this.name
+//     }
+//     return testFunc()
+//   }
+// }
 
 const removeTask = (task) => {
-  const tao = new Person('Pogi')
-  tao.changeName('Xander Ford')
-  console.log(tao.getName())
-  const i = todos.value.findIndex(t => t.id === task.id)
-  todos.value.splice(i, 1)
+  // const tao = new Person('Pogi')
+  // tao.changeName('Xander Ford')
+  // console.log(tao.getName())
+  // const i = todos.value.findIndex(t => t.id === task.id)
+  // todos.value.splice(i, 1)
+  $todosService.remove(task._id)
 }
 </script>
