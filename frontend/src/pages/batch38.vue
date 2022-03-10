@@ -22,7 +22,7 @@
         </q-item-section>
         <q-item-section :class="{ 'text-strike text-grey': todo.completed }" >{{ todo.title }}</q-item-section>
         <q-item-section side>
-          <q-btn v-show="selected === todo.id" round icon="delete" />
+          <q-btn @click="removeTask(todo)" v-show="selected === todo.id" round icon="delete" />
         </q-item-section>
       </q-item>
     </q-list>
@@ -95,5 +95,31 @@ function printHTML () {
   // $pdfMake.createPdf(dd).open()
   console.log(printable.value)
   print(printable.value)
+}
+
+class Person {
+  constructor (name) {
+    this.name = name
+  }
+
+  changeName (newName) {
+    this.name = newName
+    return this.name
+  }
+
+  getName () {
+    const testFunc = () => {
+      return this.name
+    }
+    return testFunc()
+  }
+}
+
+const removeTask = (task) => {
+  const tao = new Person('Pogi')
+  tao.changeName('Xander Ford')
+  console.log(tao.getName())
+  const i = todos.value.findIndex(t => t.id === task.id)
+  todos.value.splice(i, 1)
 }
 </script>
