@@ -21,5 +21,5 @@ export default boot(async ({ app, router }) => {
   const $wings = wings('http://localhost:3030')
   app.config.globalProperties.$wings = $wings
 
-  app.config.globalProperties.$todosService = $wings.wingsService('todos').init()
+  app.config.globalProperties.$todosService = $wings.wingsService('tasks').init()
 })

@@ -8,8 +8,8 @@
         <greet v-if="!state.fullName" @getFullName="(val) => state.fullName = val" fname="Randy" lname="Gatachalian" />
         <span v-else>{{state.fullName}}</span>
       </q-toolbar-title>
-      <q-btn flat round dense icon="apps" class="q-mr-xs" />
-      <q-btn flat round dense icon="more_vert" />
+      <q-btn @click="login" flat label="login" round dense icon="apps" class="q-mr-xs" />
+      <q-btn @click="$wings.logout()" flat round dense icon="more_vert" label="logout" />
     </q-toolbar>
     <div class="row q-gutter-sm q-pa-sm" >
       <q-input v-model="state.task" class="col" filled label="What needs to be done" />
@@ -41,7 +41,7 @@ import print from 'ink-html'
 
 const app = getCurrentInstance()
 
-const { $todosService } = app.appContext.config.globalProperties
+const { $todosService, $wings } = app.appContext.config.globalProperties
 
 // import axios from 'axios'
 
@@ -73,7 +73,26 @@ onMounted(async () => {
     console.log(data)
     todos.value = [...data]
   })
+
+  $wings.authenticate()
+
+  $wings.on('login', user => {
+    console.log('user', user)
+    $todosService.init()
+  })
+  $wings.on('logout', user => {
+    // $todosService.reset({ query: {} })
+    todos.value = []
+  })
 })
+
+function login () {
+  $wings.authenticate({
+    strategy: 'local',
+    email: 'pogi@gmail.com',
+    password: 'pogi'
+  })
+}
 
 function add () {
   // todos.value.unshift({
